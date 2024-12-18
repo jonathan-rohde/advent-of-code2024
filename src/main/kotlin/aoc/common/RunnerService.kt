@@ -20,18 +20,21 @@ class RunnerService(
                 println("#########\n# $it \n#########")
                 years[it]?.forEach { day ->
                     println("Day ${day.day}")
-                    printResult("\tPart 1 (Test)", day.testPart1) {
-                        day.part1(day.readFile(true))
-                    }
-                    printResult("\tPart 2 (Test)") {
-                        day.part1(day.readFile(false))
-                    }
-                    printResult("\tPart 1 (Real)", day.testPart2) {
-                        day.part2(day.readFile(true))
-                    }
-                    printResult("\tPart 2 (Real)") {
-                        day.part2(day.readFile(false))
-                    }
+                    val result = day.execute(runnerProperties.runs)
+                    println("\tPart 1:")
+                    println("\t\t Runs: ${runnerProperties.runs}")
+                    println("\t\t Results: ${result.part1.distinct.joinToString(", ")}")
+                    println("\t\t Min: ${result.part1.min}")
+                    println("\t\t Max: ${result.part1.max}")
+                    println("\t\t Avg: ${result.part1.avg}")
+                    println("\t\t Median: ${result.part1.median}")
+                    println("\tPart 2:")
+                    println("\t\t Runs: ${runnerProperties.runs}")
+                    println("\t\t Results: ${result.part2.distinct.joinToString(", ")}")
+                    println("\t\t Min: ${result.part2.min}")
+                    println("\t\t Max: ${result.part2.max}")
+                    println("\t\t Avg: ${result.part2.avg}")
+                    println("\t\t Median: ${result.part2.median}")
                 }
             }
     }
