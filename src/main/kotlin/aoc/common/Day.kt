@@ -17,9 +17,13 @@ abstract class Day(
 ) {
 
     fun execute(runs: Int = 1): Result {
-        val fileName = "Day${day.toString().padStart(2, '0')}"
+        val dayString = day.toString().padStart(2, '0')
+        val testFileName = "Day${dayString}_test"
+        val fileName = "Day$dayString"
+        val testInput = readInput(testFileName, year)
         val input = readInput(fileName, year)
 
+        val testResults = executePart1(testInput) to executePart2(testInput)
         val results = (0 until runs).map {
             val part1 = executePart1(input)
             val part2 = executePart2(input)
@@ -36,6 +40,8 @@ abstract class Day(
         val avg2 = part1.map { it.first }.map { it.toDouble(DurationUnit.MICROSECONDS) }.average().nanoseconds
         val median2 = part1.map { it.first }.sorted()[part1.size / 2]
         return Result(
+            testPart1 = testResults.first,
+            testPart2 = testResults.second,
             part1 = PartResult(
                 min = min1,
                 max = max1,
@@ -78,6 +84,8 @@ abstract class Day(
 }
 
 data class Result(
+    val testPart1: Pair<Duration, Any>,
+    val testPart2: Pair<Duration, Any>,
     val part1: PartResult,
     val part2: PartResult
 )

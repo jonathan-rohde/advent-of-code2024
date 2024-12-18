@@ -2,6 +2,7 @@ package aoc.common
 
 import org.springframework.stereotype.Service
 import utils.readInput
+import kotlin.time.Duration
 import kotlin.time.measureTime
 
 @Service
@@ -21,43 +22,31 @@ class RunnerService(
                 years[it]?.forEach { day ->
                     println("Day ${day.day}")
                     val result = day.execute(runnerProperties.runs)
-                    println("\tPart 1:")
-                    println("\t\t Runs: ${runnerProperties.runs}")
-                    println("\t\t Results: ${result.part1.distinct.joinToString(", ")}")
-                    println("\t\t Min: ${result.part1.min}")
-                    println("\t\t Max: ${result.part1.max}")
-                    println("\t\t Avg: ${result.part1.avg}")
-                    println("\t\t Median: ${result.part1.median}")
-                    println("\tPart 2:")
-                    println("\t\t Runs: ${runnerProperties.runs}")
-                    println("\t\t Results: ${result.part2.distinct.joinToString(", ")}")
-                    println("\t\t Min: ${result.part2.min}")
-                    println("\t\t Max: ${result.part2.max}")
-                    println("\t\t Avg: ${result.part2.avg}")
-                    println("\t\t Median: ${result.part2.median}")
+                    result.testPart1.printTestResult("Part 1")
+                    result.part1.print("Part 1")
+                    result.testPart1.printTestResult("Part 2")
+                    result.part2.print("Part 2")
                 }
             }
     }
 
-    private fun Day.readFile(test: Boolean): List<String> {
-        val dayToString = day.toString().padStart(2, '0')
-        val fileName = if (test) "Day${dayToString}_test" else "Day${dayToString}"
-        return readInput(fileName, year)
+    private fun PartResult.print(headline: String) {
+        println("\t$headline:")
+        println("\t\t Runs: ${runnerProperties.runs}")
+        if (runnerProperties.opaqueResults) {
+            println("\t\t Result: (censored)")
+        } else {
+            println("\t\t Result: ${distinct.joinToString(", ")}")
+        }
+        println("\t\t Min: $min")
+        println("\t\t Max: $max")
+        println("\t\t Avg: $avg")
+        println("\t\t Median: $median")
     }
 
-    private fun printResult(description: String, check: Any? = null, exec: () -> Any?) {
-        println("$description: ")
-        val measured = measureTime {
-            val result = exec()
-            if (check != null) {
-                check(result == check)
-            }
-            if (runnerProperties.opaqueResults) {
-                println("\t\tResult: (censored)")
-            } else {
-                println("\t\tResult: $result")
-            }
-        }
-        println("\t\tDuration: $measured")
+    private fun Pair<Duration, Any>.printTestResult(headline: String) {
+        println("\t$headline (Test):")
+        println("\t\t Results: $second")
+        println("\t\t Time: $first")
     }
 }
