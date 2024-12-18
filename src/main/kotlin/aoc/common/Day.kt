@@ -1,7 +1,6 @@
 package aoc.common
 
-import org.springframework.context.annotation.Bean
-import org.springframework.stereotype.Component
+import utils.println
 import utils.readInput
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.nanoseconds
@@ -23,7 +22,7 @@ abstract class Day(
         val testInput = readInput(testFileName, year)
         val input = readInput(fileName, year)
 
-        val testResults = executePart1(testInput) to executePart2(testInput)
+        val testResults = executePart1(testInput, true) to executePart2(testInput, true)
         val results = (0 until runs).map {
             val part1 = executePart1(input)
             val part2 = executePart2(input)
@@ -59,22 +58,26 @@ abstract class Day(
         )
     }
 
-    private fun executePart1(input: List<String>) : Pair<Duration, Any> {
+    private fun executePart1(input: List<String>, test: Boolean = false) : Pair<Duration, Any> {
         val result = measureTimedValue { part1(input) }
 
-//        if (testPart1 != null) {
-//            check(result == testPart1)
-//        }
+        if (test) {
+            check(result.value == testPart1) {
+                "$testPart1 != $result"
+            }
+        }
 
         return result.duration to result.value
     }
 
-    private fun executePart2(input: List<String>) : Pair<Duration, Any> {
+    private fun executePart2(input: List<String>, test: Boolean = false) : Pair<Duration, Any> {
         val result = measureTimedValue { part2(input) }
 
-//        if (testPart2 != null) {
-//            check(result == testPart2)
-//        }
+        if (test) {
+            check(result.value == testPart2) {
+                "$testPart2 != $result"
+            }
+        }
 
         return result.duration to result.value
     }
@@ -98,3 +101,11 @@ data class PartResult(
 
     val distinct: Set<Any>
 )
+
+fun Result.printResults() {
+    testPart1.second.println()
+    testPart2.second.println()
+
+    part1.distinct.joinToString(", ").println()
+    part2.distinct.joinToString(", ").println()
+}

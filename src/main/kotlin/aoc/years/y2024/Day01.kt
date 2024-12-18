@@ -1,9 +1,15 @@
 package aoc.years.y2024
 
 import aoc.common.Day
+import aoc.common.printResults
 import org.springframework.stereotype.Component
+import utils.println
 import utils.toIntList
 import kotlin.math.abs
+
+fun main() {
+    Day01().execute().printResults()
+}
 
 @Component
 class Day01: Day(day = 1, year = 2024, testPart1 = 11, testPart2 = 31) {
