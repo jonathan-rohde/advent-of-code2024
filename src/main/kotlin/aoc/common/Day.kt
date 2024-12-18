@@ -28,34 +28,7 @@ abstract class Day(
             val part2 = executePart2(input)
             part1 to part2
         }
-        val part1 = results.map { it.first }
-        val min1 = part1.minOf { it.first }
-        val max1 = part1.maxOf { it.first }
-        val avg1 = part1.map { it.first }.map { it.toDouble(DurationUnit.MICROSECONDS) }.average().nanoseconds
-        val median1 = part1.map { it.first }.sorted()[part1.size / 2]
-        val part2 = results.map { it.second }
-        val min2 = part1.minOf { it.first }
-        val max2 = part1.maxOf { it.first }
-        val avg2 = part1.map { it.first }.map { it.toDouble(DurationUnit.MICROSECONDS) }.average().nanoseconds
-        val median2 = part1.map { it.first }.sorted()[part1.size / 2]
-        return Result(
-            testPart1 = testResults.first,
-            testPart2 = testResults.second,
-            part1 = PartResult(
-                min = min1,
-                max = max1,
-                avg = avg1,
-                median = median1,
-                distinct = part1.map { it.second }.toSet()
-            ),
-            part2 = PartResult(
-                min = min2,
-                max = max2,
-                avg = avg2,
-                median = median2,
-                distinct = part2.map { it.second }.toSet()
-            )
-        )
+        return results join testResults
     }
 
     private fun executePart1(input: List<String>, test: Boolean = false) : Pair<Duration, Any> {
@@ -108,4 +81,36 @@ fun Result.printResults() {
 
     part1.distinct.joinToString(", ").println()
     part2.distinct.joinToString(", ").println()
+}
+
+internal infix fun List<Pair<Pair<Duration, Any>, Pair<Duration, Any>>>.join(testResults: Pair<Pair<Duration, Any>, Pair<Duration, Any>>) : Result {
+    val part1 = map { it.first }
+    val part2 = map { it.second }
+    return Result(
+        testPart1 = testResults.first,
+        testPart2 = testResults.second,
+        part1 = part1.statistics(),
+        part2 = part2.statistics()
+    )
+}
+
+private fun  List<Pair<Duration, Any>>.statistics(): PartResult {
+    var min = Long.MAX_VALUE.nanoseconds
+    var max = Long.MIN_VALUE.nanoseconds
+    var sum = 0.0.nanoseconds
+    map { it.first }.forEach { it ->
+        if (it < min) min = it
+        if (it > max) max = it
+        sum += it
+
+    }
+    val avg = sum / size
+    val median = map { it.first }.sorted()[size / 2]
+    return PartResult(
+        min = min,
+        max = max,
+        avg = avg,
+        median = median,
+        distinct = map { it.second }.toSet()
+    )
 }
