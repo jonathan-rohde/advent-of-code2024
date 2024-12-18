@@ -17,6 +17,6 @@ class Runner(
 ): CommandLineRunner {
 
     override fun run(vararg args: String?) {
-        runnerService.execute()
+        runnerService.execute(listOf(2024), emptyList())
     }
 }

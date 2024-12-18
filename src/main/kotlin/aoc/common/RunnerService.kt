@@ -15,13 +15,17 @@ class RunnerService(
             value.sortedBy { it.day }
         }
 
-    fun execute() {
-        runnerProperties.years.sorted()
+    fun execute(years: List<Int>, days: List<Int> = emptyList()) {
+        runnerProperties.years
+            .filter { it in years }
+            .sorted()
             .forEach {
                 println("#########\n# $it \n#########")
-                years[it]?.forEach { day ->
-                    println("Day ${day.day}")
-                    val result = day.execute(runnerProperties.runs)
+                this.years[it]
+                    ?.filter { proc -> days.isEmpty() || proc.day in days }
+                    ?.forEach { proc ->
+                    println("Day ${proc.day}")
+                    val result = proc.execute(runnerProperties.runs)
                     result.testPart1.printTestResult("Part 1")
                     result.part1.print("Part 1")
                     result.testPart1.printTestResult("Part 2")
